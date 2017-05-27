@@ -1,0 +1,174 @@
+﻿@using MVCQLBH.Ultilities
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
+
+    @if (IsSectionDefined("style"))
+    {
+        @RenderSection("style")
+    }
+
+    <style type="text/css">
+        .caption-green {
+            color: forestgreen;
+        }
+
+        .caption-red {
+            color: red;
+            font-weight: bold;
+        }
+
+        .caption-bold {
+            font-weight: bold;
+        }
+
+        .input-validation-error {
+            border: 2px solid #f00;
+            background-color: #fee;
+        }
+
+        input[type="checkbox"].input-validation-error {
+            outline: 2px solid #f00;
+        }
+
+        .validation-summary-errors {
+            color: #f00;
+            font-weight: bold;
+        }
+
+        .field-validation-error {
+            color: #f00;
+        }
+
+        .table-hover tbody tr:hover td {
+            background-color: #fe9;
+        }
+
+        .fontChu {
+            font-family: Arial;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                        @*<i class="fa fa-home" aria-hidden="true"></i>*@
+                        <i class="fa fa-user"></i>
+                    </a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="@Url.Action("IndexManageProduct","ManageProduct")">Quản lý sản phẩm</a></li>
+                        <li><a href="@Url.Action("IndexManageProduct","ManageProduct")">Quản lý loại sản phẩm</a></li>
+                        <li><a href="#">Quản lý nhà sản xuất</a></li>
+                        @*<li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">One more separated link</a></li>
+                            </ul>
+                        </li>*@
+                    </ul>
+                    @*<form class="navbar-form navbar-left">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Search">
+                        </div>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </form>*@
+                    <ul class="nav navbar-nav navbar-right">
+                        @if (Html.IsLogged() == false)
+                        {
+                            <li><a href="@Url.Action("Login","Account")">Đăng nhập Admin</a></li>
+                            <li><a href="@Url.Action("Register","Account")">Đăng ký</a></li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a href="@Url.Action("DetailCart","Cart")">
+                                    @*Sửa font awsome*@
+                                    @*<i class="fa fa-shopping-cart"><span style="font-family:Arial">Giỏ hàng đang có: @Html.GetCart().TotalQuantity() sản phẩm</span></i>*@
+                                    <i class="fa fa-shopping-cart"><span class="fontChu"> Giỏ hàng đang có: @Html.GetCart().TotalQuantity() sản phẩm</span></i>
+                                </a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@Html.GetUsername() <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="@Url.Action("Profile", "Account")"><i class="fa fa-user" aria-hidden="true"></i> Thông tin cá nhân</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a id="logoutLink" href="javascript:void"><i class="fa fa-sign-out" aria-hidden="true"></i> Thoát</a></li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
+
+        <form id="frmLogout" method="post" action="@Url.Action("Logout", "Account")"></form>
+
+        <div class="row">
+            @*<div class="col-md-3">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Loại sản phẩm</div>
+                    @Html.Action("GetList", "Category")
+                </div>
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Nhà sản xuất</div>
+                    @Html.Action("GetList", "Category")
+                </div>
+            </div>*@
+            <div class="col-md-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        @RenderSection("ContentHeaderManageProduct")
+                    </div>
+                    <div class="panel-body">
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Copyright &copy; @DateTime.Now.Year
+        </footer>
+    </div>
+
+    <script src="~/Content/js/jquery.min.js"></script>
+    <script src="~/Content/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $('#logoutLink').on('click', function () {
+            $('#frmLogout').submit();
+        });
+    </script>
+    @if (IsSectionDefined("script"))
+    {
+        @RenderSection("script")
+    }
+
+</body>
+</html>

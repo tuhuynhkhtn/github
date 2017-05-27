@@ -1,0 +1,140 @@
+﻿@using MVCQLBH.Models
+@using MVCQLBH.Ultilities
+
+@model Product
+
+@{
+    ViewBag.Title = "Add";
+    Layout = "~/Views/Shared/_LayoutManageProduct.cshtml";
+}
+
+@section style{
+    <link href="~/Content/css/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="~/Content/css/fileinput.min.css" rel="stylesheet" />
+    <link href="~/Content/css/jquery.bootstrap-touchspin.min.css" rel="stylesheet" />
+
+    <link href="~/Content/css/summernote.css" rel="stylesheet" />
+    <style type="text/css">
+        label {
+            font-weight: normal !important;
+        }
+    </style>
+}
+
+@section script{
+    <script src="~/Content/js/bootstrap-select.min.js"></script>
+    <script src="~/Content/js/fileinput.min.js"></script>
+    <script src="~/Content/js/jquery.bootstrap-touchspin.min.js"></script>
+    <script src="~/Content/js/summernote.min.js"></script>
+    <script type="text/javascript">
+        $('.selectpicker').selectpicker({
+            //style: 'btn-info',
+            //size: 4
+        });
+        $("#input-imgLg").fileinput({
+            showUpload: false,
+        });
+        $("#input-imgSm").fileinput({
+            showUpload: false,
+        });
+        $("input[name='price']").TouchSpin({
+            initval: 500,
+            min: 500,
+            max: 1000000000,
+            stepinterval: 50,
+            maxboostedstep: 10000000,
+            prefix: 'VNĐ'
+        });
+        $("input[name='quantity']").TouchSpin({
+            initval: 1,
+            min: 1,
+            verticalbuttons: true,
+            verticalupclass: 'glyphicon glyphicon-plus',
+            verticaldownclass: 'glyphicon glyphicon-minus'
+        });
+        $('#FullDesRaw').summernote();
+    </script>
+}
+
+
+@section ContentHeaderManageProduct{
+    Thêm mới sản phẩm
+}
+
+<div class="row">
+    <div class="col-md-12">
+        @using (Html.BeginForm("Add", "ManageProduct", FormMethod.Post, new { @class = "form-horizontal", id = "frmAdd", enctype = "multipart/form-data"}))
+        {
+            <div class="form-group">
+                @Html.LabelFor(m => m.ProName, "Tên sản phẩm:", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.ProName, new { @class = "form-control", placeholder = "tên sản phẩm" })
+                </div>
+                @Html.LabelFor(m => m.CatID, "Danh mục:", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(m => m.CatID, Html.GetSLICat(), new { @class = "form-control selectpicker", placeholder = "danh mục" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Price, "Giá:", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4">
+                    @*@Html.TextBoxFor(m => m.Price, new { @class = "form-control", placeholder = "giá" })*@
+                    <input name="price" type="text" class="form-control">
+                </div>
+                @Html.LabelFor(m => m.Quantity, "Số lượng:", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4">
+                    <input name="quantity" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.XuatXu, "Xuất xứ:", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(m => m.XuatXu, new { @class = "form-control", placeholder = "xuất xứ" })
+                </div>
+                @Html.LabelFor(m => m.Loai, "Loại:", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4">
+                    <select name="loai" class="form-control selectpicker">
+                        <option>Cao cấp</option>
+                        <option>Trung cấp</option>
+                        <option>Thường</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Hình chính:", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4">
+                   <input id="input-imgLg" type="file" name="imgLg"/>
+                </div>
+                @Html.Label("Hình phụ:", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4">
+                    <input id="input-imgSm" type="file" name="imgSm" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.TinyDes, "Mô tả ngắn:", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-10">
+                    @Html.TextBoxFor(m => m.TinyDes, new { @class = "form-control", placeholder = "mô tả ngắn" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.FullDesRaw, "Mô tả:", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-10">
+                   @*TextAreaFor: là Text nhiều dòng*@
+                    @Html.TextAreaFor(m => m.FullDesRaw, new { @class = "form-control", placeholder = "mô tả" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-plus"></i>
+                        &nbsp;Thêm
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

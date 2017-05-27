@@ -1,0 +1,142 @@
+﻿@using MVCQLBH.Models
+@using BotDetect.Web.Mvc
+
+@model UserRegisting
+
+@section style{
+    <link href="@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl" rel="stylesheet" type="text/css" />
+    <link href="~/Content/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .error {
+            color: red;
+        }
+    </style>
+}
+
+@section script{
+    <script src="~/Content/js/jquery.validate.min.js"></script>
+    <script src="~/Content/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript">
+        $('.datepicker').datepicker({
+            //format: 'mm/dd/yyyy',
+            format: 'd/m/yyyy',
+            autoclose: true
+        });
+
+        $("#frmRegister").validate({
+            rules: {
+                Username: "required",
+                Password: {
+                    required: true,
+                    minlength: 4
+                },
+                //PasswordRetype: "required",
+                PasswordRetype: {
+                    equalTo: "#Password"
+                },
+                Name: "required",
+                //Email: "required",
+                Email: {
+                    required: true,
+                    email: true
+                },
+                DOB: "required",
+            },
+            messages: {
+                Username: "Cần nhập tên đăng nhập",
+                Password: {
+                    required: "Cần nhập mật khẩu",
+                    minlength: "Mật khẩu ít nhất 4 kí tự"
+                },
+                PasswordRetype: "Nhập lại chưa khớp",
+                Name: "Vui lòng nhập tên",
+                //Email: "Cần nhập email",
+                Email: {
+                    required: "Vui lòng nhập email",
+                    email: "Email chưa hợp lệ"
+                },
+                DOB: "Cần nhập ngày sinh",
+            }
+        });
+    </script>
+}
+
+@section ContentHeader{
+    Đăng ký tài khoản
+}
+
+<div class="row">
+    @if (ViewBag.ErrorMsg != null)
+    {
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            @ViewBag.ErrorMsg
+        </div>
+        //<p class="error">@ViewBag.ErrorMsg</p>
+        //<p class="alert alert-warning" role="alert">@ViewBag.ErrorMsg</p>
+    }
+
+    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", id = "frmRegister" }))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.Username, "Tên đăng nhập", new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-6">
+                @Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "tên đăng nhập" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Password, "Mật khẩu", new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-6">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "mật khẩu" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.PasswordRetype, "Nhập lại", new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-6">
+                @Html.PasswordFor(m => m.PasswordRetype, new { @class = "form-control", placeholder = "nhập lại" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name, "Họ tên", new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-6">
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "họ tên" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Email, "Email", new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-6">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "email", type = "email" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.DOB, "Ngày sinh", new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-6">
+                @Html.TextBoxFor(m => m.DOB, new { @class = "form-control datepicker", placeholder = "d/m/yyyy" })
+            </div>
+        </div>
+
+        // Captcha:
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-6">
+                @{ MvcCaptcha exampleCaptcha = new MvcCaptcha("ExampleCaptcha"); }
+                @Html.Captcha(exampleCaptcha)
+            </div> 
+        </div>
+
+        <div  class="form-group">
+            <label class="col-sm-2 control-label" for="CapchaCode">Captcha</label>
+            <div class="col-sm-6">
+                @Html.TextBox("CaptchaCode")
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-success">
+                    <i class="fa fa-check"></i>
+                    Đăng ký
+                </button>
+            </div>
+        </div>
+    }
+</div>

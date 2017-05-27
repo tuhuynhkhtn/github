@@ -1,0 +1,100 @@
+﻿@using MVCQLBH.Models
+@using MVCQLBH.Ultilities
+
+@model Product
+
+@section style{
+    <link href="~/Content/css/jquery.bootstrap-touchspin.min.css" rel="stylesheet" />
+    <link href="~/Content/css/lightbox.min.css" rel="stylesheet" />
+    <style type="text/css">
+        img{
+            width: 400px;
+            height: 400px;
+        }
+    </style>
+}
+
+@section script{
+    <script src="~/Content/js/jquery.bootstrap-touchspin.min.js"></script>
+    <script src="~/Content/js/lightbox.min.js"></script>
+    <script type="text/javascript">
+        $("input[name='quantity']").TouchSpin({
+            initval: 1
+        });
+
+        $('a[name ="lightbox"]').lightbox({
+            wrapAround: true,
+            disableScrolling: true
+        });
+    </script>
+}
+
+@section ContentHeader{
+    Chi tiết sản phẩm
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        @*<img src="~/imgs/sp/@p.ProID/main_thumbs.jpg" title="@p.ProName" />*@
+        @*<img src="~/imgs/sp/@Model.ProID/main.jpg" title="@Model.ProName" />*@
+        <a name="lightbox" href="~/imgs/sp/@Model.ProID/main.jpg" data-lightbox="@Model.ProName" data-title="@Model.ProName">
+            <img src="~/imgs/sp/@Model.ProID/main.jpg" title="@Model.ProName" />
+        </a>
+    </div>
+
+    <div class="caption col-sm-12">
+        <h3 class="caption-green">@Model.ProName</h3>
+        @*<h4>Giá: @string.Format("{0:C}", Model.Price)</h4>*@
+        <h4 class="caption-red">Giá: @string.Format("{0:0,0 đ}", Model.Price)</h4>
+        <h4>Số lượt xem: @Model.SoLuotXem</h4>
+        <h4>Số lượng đã bán: @Model.SoLuongDaBan</h4>
+        <h4>Mô tả: <p>@Html.Raw(Model.FullDes)</p> </h4>
+        <h4>Xuất xứ: @Model.XuatXu</h4>
+        <h4>Loại: @Model.Loai</h4>
+        <h4>Nhà sản xuất: @ViewBag.TenNSX</h4>
+    </div>
+
+    @if (Html.IsLogged() == true)
+    {
+        if (Html.IsOutOfStock(Model.ProID) == false) // Nếu chưa hết hàng thì hiện nút mua
+        {
+            <form class="form-horizontal col-sm-3" method="post" action="@Url.Action("AddCIFomDetail", "Cart")">
+                <input type="hidden" value="@Model.ProID" name="proId" />
+                <div class="input-group">
+                    <input name="quantity" type="text" class="form-control">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-cart-plus"></i>
+                        </button>
+                    </span>
+                </div>
+            </form>
+        }
+        else
+        {
+            <div class="caption col-sm-12">
+                <h4 class="caption-red">Sản phẩm đã hết hàng</h4>
+            </div>
+        }
+    }
+
+</div>
+
+<div class="row">&nbsp;</div>
+
+    <div class="panel-heading">
+        <h3 class="panel-title">5 sản phẩm cùng loại</h3>
+    </div>
+    <div class="panel-body">
+
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">5 sản phẩm cùng nhà sản xuất</h3>
+    </div>
+    <div class="panel-body">
+
+    </div>
+</div>

@@ -1,0 +1,142 @@
+﻿@using MVCQLBH.Models
+@using MVCQLBH.Ultilities
+
+@model IList<Product>
+
+@section style{
+    <link href="~/Content/css/lightbox.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .thumbnail {
+            min-height: 470px;
+        }
+
+        .proName {
+            min-height: 60px;
+        }
+
+        .minHeight {
+            min-height: 50px;
+        }
+
+        #minHeight {
+            min-height: 50px;
+        }
+    </style>
+}
+
+@section script{
+    <script src="~/Content/js/lightbox.min.js"></script>
+    <script type="text/javascript">
+        $('a[name ="aAddItem"]').on('click', function () {
+            //alert(1);
+            //alert($(this).data('id'));
+            var pId = ($(this).data('id'));
+            $('#pId').val(pId);
+            $('#cId').val(@ViewBag.cId);
+            $('#p').val(@ViewBag.curPage);
+            $('#frmAddCI').submit();
+        });
+
+        $('a[name ="lightbox"]').lightbox({
+            wrapAround: true,
+            disableScrolling: true
+        });
+    </script>
+}
+
+
+@section ContentHeader{
+    Danh sách sản phẩm
+}
+
+@if (Model.Count == 0)
+{
+    <p>Không có sản phẩm</p>
+}
+else
+{
+    @*<form id="frmAddCI" method="post" action="@Url.Action("AddCIFromListProduct", "Cart")">*@
+    <form id="frmAddCI" method="post" action="@Url.Action("AddCIFromListProduct", "Cart")">
+        <input id="pId" type="hidden" name="proId" />
+        <input id="cId" type="hidden" name="catID" />
+        <input id="p" type="hidden" name="page" />
+    </form>
+    <div class="row">
+        @foreach (var p in Model)
+        {
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    @*<img src="~/imgs/sp/@p.ProID/main_thumbs.jpg" title="@p.ProName" />*@
+                    @*<img src="~/imgs/sp/@p.ProID/main.jpg" title="@p.ProName" />*@
+                    <a name="lightbox" href="~/imgs/sp/@p.ProID/main.jpg" data-lightbox="@p.ProName" data-title="@p.ProName"  height="290" width="200">
+                        <img src="~/imgs/sp/@p.ProID/main.jpg" title="@p.ProName"/>
+                    </a>
+
+                    <div class="caption">
+                        <h3 id="minHeight" class="caption-green">@Html.LessString(p.ProName, 35)</h3>
+                        @*<h4>Giá: @string.Format("{0:C}", p.Price)</h4>*@
+                        @*<h4>Giá: @string.Format("{0:0,0 đ}", p.Price)</h4>*@
+                        <h4 class="caption-red">Giá: @Html.Price2String(p.Price)</h4>
+                        <h4 class="caption-bold">
+                            Tình trạng:
+                            @if (p.Quantity > 0)
+                            {
+                                @:Còn hàng
+                            }
+                            else
+                            {
+                                @:Hết hàng
+                            }
+                        </h4>
+                        <h4 class="minHeight">@Html.LessString(p.TinyDes, 46)</h4>
+                        <p>
+                            <a href="@Url.Action("DetailPro", "Product", new { id = p.ProID})" class="btn btn-default" role="button">Chi tiết</a>
+                            @if (Html.IsLogged() == true)
+                            {
+                                if (Html.IsOutOfStock(p.ProID) == false) // Nếu chưa hết hàng thì hiện nút mua
+                                {
+                                <a name="aAddItem" href="javascript:void" class="btn btn-primary" role="button" data-id="@p.ProID">
+                                    <i class="fa fa-cart-plus" aria-hidden="true"></i>
+                                    Mua
+                                </a>
+                                }
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    if (ViewBag.totalPage > 1)
+    {
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li>
+                    <a href="?page=@(ViewBag.curPage-1)" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= ViewBag.totalPage; i++)
+                {
+                    if (i == ViewBag.curPage)
+                    {
+                        <li class="active"><a href="?page=@i">@i</a></li>
+                    }
+                    else
+                    {
+                        <li><a href="?page=@i">@i</a></li>
+                    }
+                }
+
+                <li>
+                    <a href="?page=@(ViewBag.curPage+1)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+
+}

@@ -1,0 +1,133 @@
+﻿@using MVCQLBH.Models
+@using MVCQLBH.Ultilities
+
+@model Cart
+
+@section style{
+    <link href="~/Content/css/jquery.bootstrap-touchspin.min.css" rel="stylesheet" />
+    <style type="text/css">
+        img {
+            height: 50px;
+            width: 50px;
+        }
+    </style>
+}
+
+@section ContentHeader{
+    Chi tiết giỏ hàng
+}
+
+@section script{
+    <script src="~/Content/js/jquery.bootstrap-touchspin.min.js"></script>
+    <script type="text/javascript">
+        $('input[name="inputQ"]').TouchSpin({
+            min: 1,
+            verticalbuttons: true,
+            verticalupclass: 'glyphicon glyphicon-plus',
+            verticaldownclass: 'glyphicon glyphicon-minus'
+        });
+
+        $('a[name ="aRemoveCI"]').on('click', function () {
+            var pId = ($(this).data('id'));
+            $('#pId').val(pId);
+            $('#frmRemoveCI').submit();
+        });
+
+        $('a[name ="aUpdateCI"]').on('click', function () {
+            var pId = ($(this).data('id'));
+            $('#pIdUpdate').val(pId);
+            var q = $('#inputQ_' + pId).val();
+            //alert(q);
+            $('#q').val(q);
+            $('#frmUpdateCI').submit();
+        });
+    </script>
+}
+
+@if(Model.Items.Count == 0)
+{
+    @:Giỏ hàng còn trống
+}
+else
+{
+    <form id="frmRemoveCI" method="post" action="@Url.Action("Remove", "Cart")">
+        <input id="pId" type="hidden" name="proId" />
+    </form>
+    <form id="frmUpdateCI" method="post" action="@Url.Action("Update", "Cart")">
+        <input id="pIdUpdate" type="hidden" name="proId" />
+        <input id="q" type="hidden" name="quantity" />
+    </form>
+    <div class="row">
+        <div class=" col-md-12">
+            <table class="table table-striped table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>Hình ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        decimal total = 0;
+                        decimal amount = 0;
+                    }
+                    @foreach (var ci in Model.Items)
+                    {
+                        amount = ci.Quantity * ci.Product.Price;
+                        total += amount;
+                        <tr>
+                            <td>
+                                <a name="lightbox" href="~/imgs/sp/@ci.Product.ProID/main.jpg" data-lightbox="@ci.Product.ProName" data-title="@ci.Product.ProName" height="290" width="200">
+                                    <img src="~/imgs/sp/@ci.Product.ProID/main.jpg" title="@ci.Product.ProName" />
+                                </a>
+                            </td>
+                            <td>@ci.Product.ProName</td>
+                            <td>@Html.Price2String(ci.Product.Price)</td>
+                            <td>
+                                <input id="inputQ_@ci.Product.ProID" name="inputQ" type="text" value="@ci.Quantity" />
+                            </td>
+                            <td>@Html.Price2String(amount)</td>
+                            <td>
+                                <a name="aRemoveCI" class="btn btn-danger btn-xs" href="javascript:void;" title="Xóa" data-id="@ci.Product.ProID">
+                                    <i class="fa fa-close"></i>
+                                </a>
+                                <a name="aUpdateCI" class="btn btn-success btn-xs" href="javascript:void;" title="Cập nhật" data-id="@ci.Product.ProID">
+                                    <i class="fa fa-check"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td><h4>Tổng tiền:</h4></td>
+                        <td>
+                            <h4>
+                                @Html.Price2String(total)
+                            </h4>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="col-sm-offset-6 col-md-9">
+            <form class="form-horizontal" method="post" action="@Url.Action("Checkout", "Cart")">
+                <a class="btn btn-primary" href="@Url.Action("Index", "Home")" title="Tiếp tục mua hàng">
+                    <i class="fa fa-shopping-bag"></i>
+                    Tiếp tục mua hàng
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa fa-money"></i>
+                    Thanh toán
+                </button>
+            </form>
+        </div>
+    </div>
+}

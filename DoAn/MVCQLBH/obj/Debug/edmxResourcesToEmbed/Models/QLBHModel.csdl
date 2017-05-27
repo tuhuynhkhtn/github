@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="QLBHModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Category">
+    <Key>
+      <PropertyRef Name="CatID" />
+    </Key>
+    <Property Name="CatID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CatName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Products" Relationship="QLBHModel.FK__Products__CatID__1BFD2C07" FromRole="Category" ToRole="Product" />
+  </EntityType>
+  <EntityType Name="OrderDetail">
+    <Key>
+      <PropertyRef Name="OrderID" />
+      <PropertyRef Name="ProID" />
+    </Key>
+    <Property Name="OrderID" Type="Int32" Nullable="false" />
+    <Property Name="ProID" Type="Int32" Nullable="false" />
+    <Property Name="Quantity" Type="Int32" Nullable="false" />
+    <Property Name="Price" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+    <Property Name="Amount" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+    <NavigationProperty Name="Order" Relationship="Self.FK__OrderDeta__Order__1A14E395" FromRole="OrderDetails" ToRole="Orders" />
+    <NavigationProperty Name="Product" Relationship="QLBHModel.FK__OrderDeta__ProID__1B0907CE" FromRole="OrderDetail" ToRole="Product" />
+  </EntityType>
+  <EntityType Name="Order">
+    <Key>
+      <PropertyRef Name="OrderID" />
+    </Key>
+    <Property Name="OrderID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="OrderDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UserID" Type="Int32" Nullable="false" />
+    <Property Name="Total" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+    <NavigationProperty Name="OrderDetails" Relationship="Self.FK__OrderDeta__Order__1A14E395" FromRole="Orders" ToRole="OrderDetails" />
+    <NavigationProperty Name="User" Relationship="QLBHModel.FK_UsersOrder" FromRole="Order" ToRole="User" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="f_ID" />
+    </Key>
+    <Property Name="f_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="f_Username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="f_Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="f_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="f_Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="f_DOB" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="f_Permission" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Orders" Relationship="QLBHModel.FK_UsersOrder" FromRole="User" ToRole="Order" />
+  </EntityType>
+  <Association Name="FK__OrderDeta__Order__1A14E395">
+    <End Role="Orders" Type="Self.Order" Multiplicity="1" />
+    <End Role="OrderDetails" Type="Self.OrderDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Orders">
+        <PropertyRef Name="OrderID" />
+      </Principal>
+      <Dependent Role="OrderDetails">
+        <PropertyRef Name="OrderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="QLBHEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Categories" EntityType="Self.Category" />
+    <EntitySet Name="OrderDetails" EntityType="Self.OrderDetail" />
+    <EntitySet Name="Orders" EntityType="Self.Order" />
+    <EntitySet Name="Users" EntityType="Self.User" />
+    <AssociationSet Name="FK__OrderDeta__Order__1A14E395" Association="Self.FK__OrderDeta__Order__1A14E395">
+      <End Role="Orders" EntitySet="Orders" />
+      <End Role="OrderDetails" EntitySet="OrderDetails" />
+    </AssociationSet>
+    <EntitySet Name="NhaSanXuats" EntityType="QLBHModel.NhaSanXuat" />
+    <AssociationSet Name="FK_UsersOrder" Association="QLBHModel.FK_UsersOrder">
+      <End Role="User" EntitySet="Users" />
+      <End Role="Order" EntitySet="Orders" />
+    </AssociationSet>
+    <EntitySet Name="Products" EntityType="QLBHModel.Product" />
+    <AssociationSet Name="FK__Products__CatID__1BFD2C07" Association="QLBHModel.FK__Products__CatID__1BFD2C07">
+      <End Role="Category" EntitySet="Categories" />
+      <End Role="Product" EntitySet="Products" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Products__IDNhaSanXuat__1BFD2C07" Association="QLBHModel.FK__Products__IDNhaSanXuat__1BFD2C07">
+      <End Role="NhaSanXuat" EntitySet="NhaSanXuats" />
+      <End Role="Product" EntitySet="Products" />
+    </AssociationSet>
+    <AssociationSet Name="FK__OrderDeta__ProID__1B0907CE" Association="QLBHModel.FK__OrderDeta__ProID__1B0907CE">
+      <End Role="Product" EntitySet="Products" />
+      <End Role="OrderDetail" EntitySet="OrderDetails" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="NhaSanXuat">
+    <Key>
+      <PropertyRef Name="IDNhaSanXuat" />
+    </Key>
+    <Property Name="IDNhaSanXuat" Type="Int32" Nullable="false" />
+    <Property Name="TenNhaSanXuat" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Products" Relationship="QLBHModel.FK__Products__IDNhaSanXuat__1BFD2C07" FromRole="NhaSanXuat" ToRole="Product" />
+  </EntityType>
+  <Association Name="FK_UsersOrder">
+    <End Type="QLBHModel.User" Role="User" Multiplicity="1" />
+    <End Type="QLBHModel.Order" Role="Order" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="f_ID" />
+      </Principal>
+      <Dependent Role="Order">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Product">
+    <Key>
+      <PropertyRef Name="ProID" />
+    </Key>
+    <Property Name="ProID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ProName" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="TinyDes" Type="String" Nullable="false" MaxLength="80" FixedLength="false" Unicode="true" />
+    <Property Name="FullDes" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Price" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="CatID" Type="Int32" Nullable="false" />
+    <Property Name="Quantity" Type="Int32" Nullable="false" />
+    <Property Name="NgayNhap" Type="DateTime" Precision="3" />
+    <Property Name="SoLuotXem" Type="Int32" />
+    <Property Name="XuatXu" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Loai" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="IDNhaSanXuat" Type="Int32" />
+    <Property Name="BiXoa" Type="Byte" />
+    <Property Name="SoLuongDaBan" Type="Int32" />
+    <NavigationProperty Name="Category" Relationship="QLBHModel.FK__Products__CatID__1BFD2C07" FromRole="Product" ToRole="Category" />
+    <NavigationProperty Name="NhaSanXuat" Relationship="QLBHModel.FK__Products__IDNhaSanXuat__1BFD2C07" FromRole="Product" ToRole="NhaSanXuat" />
+    <NavigationProperty Name="OrderDetails" Relationship="QLBHModel.FK__OrderDeta__ProID__1B0907CE" FromRole="Product" ToRole="OrderDetail" />
+  </EntityType>
+  <Association Name="FK__Products__CatID__1BFD2C07">
+    <End Type="QLBHModel.Category" Role="Category" Multiplicity="1" />
+    <End Type="QLBHModel.Product" Role="Product" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Category">
+        <PropertyRef Name="CatID" />
+      </Principal>
+      <Dependent Role="Product">
+        <PropertyRef Name="CatID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Products__IDNhaSanXuat__1BFD2C07">
+    <End Type="QLBHModel.NhaSanXuat" Role="NhaSanXuat" Multiplicity="0..1" />
+    <End Type="QLBHModel.Product" Role="Product" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="NhaSanXuat">
+        <PropertyRef Name="IDNhaSanXuat" />
+      </Principal>
+      <Dependent Role="Product">
+        <PropertyRef Name="IDNhaSanXuat" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__OrderDeta__ProID__1B0907CE">
+    <End Type="QLBHModel.Product" Role="Product" Multiplicity="1" />
+    <End Type="QLBHModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Product">
+        <PropertyRef Name="ProID" />
+      </Principal>
+      <Dependent Role="OrderDetail">
+        <PropertyRef Name="ProID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
